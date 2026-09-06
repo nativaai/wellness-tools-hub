@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calorie Calculator — WellnessKit Hub</title>
+    <meta name="description" content="Calculate Daily Caloric Needs (TDEE) and Basal Metabolic Rate using the validated Mifflin-St Jeor equation. Features activity multipliers and macronutrient breakdowns." />
+    <meta property="og:title" content="Calorie Calculator — WellnessKit Hub" />
+    <meta property="og:description" content="Calculate Total Daily Energy Expenditure (TDEE) with the clinical Mifflin-St Jeor formula and activity multipliers." />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <header class="site-header">
+      <div class="container nav-container">
+        <a href="index.html" class="brand-link" id="nav-brand-logo">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+          </div>
+          <span>WellnessKit Hub</span>
+        </a>
+
+        <ul class="nav-links" id="primary-nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="bmi-calculator.html" class="nav-link">BMI</a></li>
+          <li><a href="calorie-calculator.html" class="nav-link active">Calories</a></li>
+          <li><a href="water-intake-calculator.html" class="nav-link">Hydration</a></li>
+          <li><a href="sleep-cycle-calculator.html" class="nav-link">Sleep Cycles</a></li>
+          <li><a href="bmr-calculator.html" class="nav-link">BMR</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <button class="icon-btn mobile-menu-btn" id="mobile-menu-btn" title="Toggle Menu" aria-label="Toggle Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="separator">/</span>
+        <span class="current">Calorie Calculator</span>
+      </nav>
+
+      <!-- Mandatory Health & YMYL Compliance Disclaimer -->
+      <div class="ymyl-disclaimer-banner" role="alert">
+        <div class="ymyl-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="ymyl-content">
+          <h4>Health &amp; Medical Disclaimer</h4>
+          <p>
+            This tool provides general estimates for informational purposes only and is not a substitute for professional medical advice. Consult a doctor or registered dietitian for personalized guidance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Page Header with Citation -->
+      <div style="margin-bottom: 24px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <span class="badge-category badge-calorie">Energy Balance</span>
+          <h1 style="font-size: 2.1rem; font-weight: 800; color: var(--text-heading); margin-top: 6px; letter-spacing: -0.02em;">
+            Daily Calorie &amp; TDEE Calculator
+          </h1>
+          <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 4px;">
+            Calculated using the Mifflin-St Jeor equation with standard physical activity level (PAL) multipliers.
+          </p>
+        </div>
+        <button class="pill-btn" onclick="openFormulaModal('calorie')">
+          <span>📖 Explain This Formula</span>
+        </button>
+      </div>
+
+      <!-- Workstation -->
+      <section class="tool-workstation">
+        <!-- Input Panel -->
+        <div class="tool-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">1. Metabolic Profile</h2>
+            <div class="unit-switcher" role="radiogroup">
+              <button class="unit-btn active" id="btn-unit-metric" onclick="setUnit('metric')">Metric (cm, kg)</button>
+              <button class="unit-btn" id="btn-unit-imperial" onclick="setUnit('imperial')">Imperial (ft/in, lbs)</button>
+            </div>
+          </div>
+
+          <form id="calorie-form" onsubmit="event.preventDefault();">
+            <!-- Biological Sex -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Biological Sex (Formula Parameter)</span>
+              </label>
+              <div class="segmented-group">
+                <button type="button" class="segmented-btn active" id="btn-sex-male" onclick="setSex('male')">Male (+5)</button>
+                <button type="button" class="segmented-btn" id="btn-sex-female" onclick="setSex('female')">Female (-161)</button>
+              </div>
+            </div>
+
+            <!-- Age -->
+            <div class="form-group">
+              <label class="form-label" for="input-age">
+                <span>Age (Years)</span>
+                <span class="form-label-hint" id="val-age">28 yrs</span>
+              </label>
+              <input type="number" id="input-age" class="form-input" min="15" max="100" value="28" oninput="handleAgeChange(this.value)" />
+              <div class="slider-container">
+                <input type="range" id="slider-age" class="slider-input" min="15" max="90" value="28" oninput="handleAgeChange(this.value)" />
+              </div>
+            </div>
+
+            <!-- Height Metric -->
+            <div class="form-group" id="group-height-metric">
+              <label class="form-label" for="input-height-cm">
+                <span>Height</span>
+                <span class="form-label-hint" id="val-height-cm">175 cm</span>
+              </label>
+              <input type="number" id="input-height-cm" class="form-input" min="100" max="230" value="175" oninput="handleHeightMetric(this.value)" />
+              <div class="slider-container">
+                <input type="range" id="slider-height-cm" class="slider-input" min="120" max="220" value="175" oninput="handleHeightMetric(this.value)" />
+              </div>
+            </div>
+
+            <!-- Height Imperial -->
+            <div class="form-group" id="group-height-imperial" style="display: none;">
+              <label class="form-label">
+                <span>Height</span>
+                <span class="form-label-hint" id="val-height-imperial">5 ft 9 in</span>
+              </label>
+              <div class="input-group-row">
+                <div>
+                  <input type="number" id="input-height-ft" class="form-input" min="3" max="8" value="5" placeholder="Feet" oninput="calculateCalories()" />
+                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">Feet</span>
+                </div>
+                <div>
+                  <input type="number" id="input-height-in" class="form-input" min="0" max="11" value="9" placeholder="Inches" oninput="calculateCalories()" />
+                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">Inches</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weight Metric -->
+            <div class="form-group" id="group-weight-metric">
+              <label class="form-label" for="input-weight-kg">
+                <span>Weight</span>
+                <span class="form-label-hint" id="val-weight-kg">70.0 kg</span>
+              </label>
+              <input type="number" id="input-weight-kg" class="form-input" min="30" max="250" value="70" step="0.5" oninput="handleWeightMetric(this.value)" />
+              <div class="slider-container">
+                <input type="range" id="slider-weight-kg" class="slider-input" min="40" max="160" value="70" step="0.5" oninput="handleWeightMetric(this.value)" />
+              </div>
+            </div>
+
+            <!-- Weight Imperial -->
+            <div class="form-group" id="group-weight-imperial" style="display: none;">
+              <label class="form-label" for="input-weight-lbs">
+                <span>Weight (Pounds)</span>
+                <span class="form-label-hint" id="val-weight-lbs">154.3 lbs</span>
+              </label>
+              <input type="number" id="input-weight-lbs" class="form-input" min="60" max="550" value="154" step="1" oninput="calculateCalories()" />
+              <div class="slider-container">
+                <input type="range" id="slider-weight-lbs" class="slider-input" min="80" max="350" value="154" oninput="document.getElementById('input-weight-lbs').value = this.value; calculateCalories();" />
+              </div>
+            </div>
+
+            <!-- Physical Activity Level -->
+            <div class="form-group">
+              <label class="form-label" for="select-activity">
+                <span>Physical Activity Level (PAL)</span>
+              </label>
+              <select id="select-activity" class="form-select" onchange="calculateCalories()">
+                <option value="1.2">Sedentary (Little or no exercise, desk work) &times; 1.2</option>
+                <option value="1.375" selected>Lightly Active (Exercise 1–3 days/week) &times; 1.375</option>
+                <option value="1.55">Moderately Active (Moderate exercise 3–5 days/week) &times; 1.55</option>
+                <option value="1.725">Very Active (Hard training 6–7 days/week) &times; 1.725</option>
+                <option value="1.9">Extra Active (Very heavy physical job or 2x/day training) &times; 1.9</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 24px;">
+              <button type="button" class="pill-btn pill-btn-primary" onclick="calculateCalories()" style="flex: 1; justify-content: center;">
+                Recalculate Energy
+              </button>
+              <button type="button" class="pill-btn" onclick="resetCalorieForm()" style="justify-content: center;">
+                Reset
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="tool-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">2. Daily Energy Estimates</h2>
+            <button class="pill-btn" onclick="copyCalorieResult()" style="padding: 4px 12px; font-size: 0.8rem;">
+              📋 Copy Breakdown
+            </button>
+          </div>
+
+          <!-- Highlight Metric: Maintenance TDEE -->
+          <div class="results-card">
+            <span class="results-metric-label">Daily Maintenance Caloric Need (TDEE)</span>
+            <div>
+              <span class="results-metric-value" id="res-tdee-val">2,306</span>
+              <span class="results-metric-unit">kcal/day</span>
+            </div>
+            <div class="results-category-badge badge-calorie" id="res-bmr-badge">
+              Basal Metabolic Rate: 1,677 kcal/day
+            </div>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin-top: 14px;">
+              Based on the Mifflin-St Jeor equation, this represents the estimated daily energy expenditure to sustain current weight at this physical activity level.
+            </p>
+          </div>
+
+          <!-- Goal Table -->
+          <h4 style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 10px;">
+            Target Energy Balance Guidelines
+          </h4>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Energy Goal</th>
+                <th style="text-align: right;">Target (kcal/day)</th>
+                <th style="text-align: right;">Differential</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight">
+                <td>Maintain Current Weight</td>
+                <td style="font-weight: 700; text-align: right;" id="goal-maintain">2,306</td>
+                <td style="text-align: right; color: var(--text-muted);">Baseline (0)</td>
+              </tr>
+              <tr>
+                <td>Mild Weight Loss (~0.25 kg / 0.5 lb wk)</td>
+                <td style="font-weight: 600; text-align: right;" id="goal-loss-mild">2,056</td>
+                <td style="text-align: right; color: var(--accent-emerald);">-250 kcal</td>
+              </tr>
+              <tr>
+                <td>Standard Weight Loss (~0.5 kg / 1.0 lb wk)</td>
+                <td style="font-weight: 600; text-align: right;" id="goal-loss-std">1,806</td>
+                <td style="text-align: right; color: var(--accent-emerald);">-500 kcal</td>
+              </tr>
+              <tr>
+                <td>Mild Weight Gain (~0.25 kg / 0.5 lb wk)</td>
+                <td style="font-weight: 600; text-align: right;" id="goal-gain-mild">2,556</td>
+                <td style="text-align: right; color: var(--accent-amber);">+250 kcal</td>
+              </tr>
+              <tr>
+                <td>Standard Weight Gain (~0.5 kg / 1.0 lb wk)</td>
+                <td style="font-weight: 600; text-align: right;" id="goal-gain-std">2,806</td>
+                <td style="text-align: right; color: var(--accent-amber);">+500 kcal</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Macronutrient Split Reference -->
+          <div style="margin-top: 24px; padding: 14px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+            <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">
+              Standard Acceptable Macronutrient Distribution Ranges (AMDR)
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 0.825rem; text-align: center;">
+              <div style="padding: 8px; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <div style="color: var(--accent-cyan); font-weight: 700;">Carbohydrates</div>
+                <div id="macro-carbs" style="margin-top: 2px;">260–375 g</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">45% – 65%</div>
+              </div>
+              <div style="padding: 8px; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <div style="color: var(--accent-emerald); font-weight: 700;">Protein</div>
+                <div id="macro-protein" style="margin-top: 2px;">86–144 g</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">15% – 25%</div>
+              </div>
+              <div style="padding: 8px; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <div style="color: var(--accent-amber); font-weight: 700;">Fats</div>
+                <div id="macro-fats" style="margin-top: 2px;">51–90 g</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">20% – 35%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Bento -->
+      <section class="bento-grid">
+        <article class="bento-card col-span-6">
+          <div class="card-top">
+            <span class="badge-category badge-calorie">Physiology</span>
+          </div>
+          <h3 class="card-title">Components of Daily Energy Expenditure</h3>
+          <div style="font-size: 0.885rem; color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 10px;">
+            <p><strong>1. Basal Metabolic Rate (BMR):</strong> Represents 60% to 75% of daily energy expenditure in sedentary adults, sustaining heart rate, respiration, ion transport, and core temperature.</p>
+            <p><strong>2. Thermic Effect of Food (TEF):</strong> Obligatory metabolic cost of digesting, absorbing, and assimilating nutrients (typically ~8% to 10% of total calories ingested).</p>
+            <p><strong>3. Activity Thermogenesis (EAT &amp; NEAT):</strong> Includes planned deliberate exercise (Exercise Activity Thermogenesis) and spontaneous non-exercise movements such as walking, posture, and fidgeting (Non-Exercise Activity Thermogenesis).</p>
+          </div>
+        </article>
+
+        <article class="bento-card col-span-6">
+          <div class="card-top">
+            <span class="badge-category badge-calorie">Research Validation</span>
+          </div>
+          <h3 class="card-title">Why Mifflin-St Jeor Over Legacy Formulas?</h3>
+          <div style="font-size: 0.885rem; color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 10px;">
+            <p>Historically, the Harris-Benedict equation (formulated in 1919) was widely used. However, modern systematic reviews by the Academy of Nutrition and Dietetics demonstrated that Harris-Benedict overestimates resting energy expenditure by approximately 5% to 15% in contemporary populations.</p>
+            <p>The Mifflin-St Jeor formula was derived from 498 healthy men and women and was validated against indirect calorimetry as predicting resting energy expenditure within &plusmn;10% of measured values in over 82% of individuals.</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- Citation -->
+      <div class="citation-box">
+        <div class="citation-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <h4>Primary Academic Citation</h4>
+        </div>
+        <p class="citation-text">
+          Mifflin MD, St Jeor ST, Hill JO, Scott BJ, Daugherty SA, Koh YH. "A new predictive equation for resting energy expenditure in healthy individuals." The American Journal of Clinical Nutrition. 1990 Feb;51(2):241-7. doi: 10.1093/ajcn/51.2.241.
+        </p>
+        <p class="citation-ref">
+          Formula: Men = 10W + 6.25H - 5A + 5 &bull; Women = 10W + 6.25H - 5A - 161 &bull; TDEE = BMR &times; PAL
+        </p>
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <div>&copy; 2026 WellnessKit Hub &bull; Evidence-based health calculator suite.</div>
+          <div><a href="index.html">Back to Hub Home</a> &bull; <a href="sitemap.xml">Sitemap</a></div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="shared.js"></script>
+    <script>
+      let currentUnit = 'metric';
+      let selectedSex = 'male';
+
+      function setSex(sex) {
+        selectedSex = sex;
+        document.getElementById('btn-sex-male').classList.toggle('active', sex === 'male');
+        document.getElementById('btn-sex-female').classList.toggle('active', sex === 'female');
+        calculateCalories();
+      }
+
+      function setUnit(unit) {
+        currentUnit = unit;
+        document.getElementById('btn-unit-metric').classList.toggle('active', unit === 'metric');
+        document.getElementById('btn-unit-imperial').classList.toggle('active', unit === 'imperial');
+
+        document.getElementById('group-height-metric').style.display = unit === 'metric' ? 'block' : 'none';
+        document.getElementById('group-height-imperial').style.display = unit === 'imperial' ? 'block' : 'none';
+        document.getElementById('group-weight-metric').style.display = unit === 'metric' ? 'block' : 'none';
+        document.getElementById('group-weight-imperial').style.display = unit === 'imperial' ? 'block' : 'none';
+
+        calculateCalories();
+      }
+
+      function handleAgeChange(val) {
+        document.getElementById('input-age').value = val;
+        document.getElementById('slider-age').value = val;
+        document.getElementById('val-age').innerText = val + ' yrs';
+        calculateCalories();
+      }
+
+      function handleHeightMetric(val) {
+        document.getElementById('input-height-cm').value = val;
+        document.getElementById('slider-height-cm').value = val;
+        document.getElementById('val-height-cm').innerText = val + ' cm';
+        calculateCalories();
+      }
+
+      function handleWeightMetric(val) {
+        document.getElementById('input-weight-kg').value = val;
+        document.getElementById('slider-weight-kg').value = val;
+        document.getElementById('val-weight-kg').innerText = Number(val).toFixed(1) + ' kg';
+        calculateCalories();
+      }
+
+      function calculateCalories() {
+        const age = parseFloat(document.getElementById('input-age').value) || 28;
+        let heightCm = 0;
+        let weightKg = 0;
+
+        if (currentUnit === 'metric') {
+          heightCm = parseFloat(document.getElementById('input-height-cm').value) || 175;
+          weightKg = parseFloat(document.getElementById('input-weight-kg').value) || 70;
+          document.getElementById('val-height-cm').innerText = heightCm + ' cm';
+          document.getElementById('val-weight-kg').innerText = weightKg.toFixed(1) + ' kg';
+        } else {
+          const ft = parseFloat(document.getElementById('input-height-ft').value) || 5;
+          const inc = parseFloat(document.getElementById('input-height-in').value) || 9;
+          const lbs = parseFloat(document.getElementById('input-weight-lbs').value) || 154;
+
+          heightCm = ((ft * 12) + inc) * 2.54;
+          weightKg = lbs * 0.45359237;
+
+          document.getElementById('val-height-imperial').innerText = `${ft} ft ${inc} in`;
+          document.getElementById('val-weight-lbs').innerText = lbs.toFixed(1) + ' lbs';
+        }
+
+        const pal = parseFloat(document.getElementById('select-activity').value) || 1.375;
+
+        // Mifflin-St Jeor Equation
+        // Men: 10 * weight_kg + 6.25 * height_cm - 5 * age + 5
+        // Women: 10 * weight_kg + 6.25 * height_cm - 5 * age - 161
+        const s = selectedSex === 'male' ? 5 : -161;
+        const bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + s;
+        const tdee = bmr * pal;
+
+        // Update UI
+        document.getElementById('res-tdee-val').innerText = Math.round(tdee).toLocaleString();
+        document.getElementById('res-bmr-badge').innerText = `Basal Metabolic Rate: ${Math.round(bmr).toLocaleString()} kcal/day`;
+
+        // Goals
+        document.getElementById('goal-maintain').innerText = Math.round(tdee).toLocaleString();
+        document.getElementById('goal-loss-mild').innerText = Math.max(1200, Math.round(tdee - 250)).toLocaleString();
+        document.getElementById('goal-loss-std').innerText = Math.max(1200, Math.round(tdee - 500)).toLocaleString();
+        document.getElementById('goal-gain-mild').innerText = Math.round(tdee + 250).toLocaleString();
+        document.getElementById('goal-gain-std').innerText = Math.round(tdee + 500).toLocaleString();
+
+        // Macronutrients (Carbs 45-65%, Protein 15-25%, Fats 20-35%)
+        // Carbs & Protein: 4 kcal/g, Fat: 9 kcal/g
+        const minCarbKcal = tdee * 0.45;
+        const maxCarbKcal = tdee * 0.65;
+        const minProtKcal = tdee * 0.15;
+        const maxProtKcal = tdee * 0.25;
+        const minFatKcal = tdee * 0.20;
+        const maxFatKcal = tdee * 0.35;
+
+        document.getElementById('macro-carbs').innerText = `${Math.round(minCarbKcal / 4)}–${Math.round(maxCarbKcal / 4)} g`;
+        document.getElementById('macro-protein').innerText = `${Math.round(minProtKcal / 4)}–${Math.round(maxProtKcal / 4)} g`;
+        document.getElementById('macro-fats').innerText = `${Math.round(minFatKcal / 9)}–${Math.round(maxFatKcal / 9)} g`;
+      }
+
+      function resetCalorieForm() {
+        setSex('male');
+        handleAgeChange(28);
+        if (currentUnit === 'metric') {
+          handleHeightMetric(175);
+          handleWeightMetric(70);
+        } else {
+          document.getElementById('input-height-ft').value = 5;
+          document.getElementById('input-height-in').value = 9;
+          document.getElementById('input-weight-lbs').value = 154;
+          document.getElementById('slider-weight-lbs').value = 154;
+        }
+        document.getElementById('select-activity').value = "1.375";
+        calculateCalories();
+      }
+
+      function copyCalorieResult() {
+        const tdee = document.getElementById('res-tdee-val').innerText;
+        const bmr = document.getElementById('res-bmr-badge').innerText;
+        const text = `WellnessKit Hub — Calorie Calculation Result\nMaintenance TDEE: ${tdee} kcal/day\n${bmr}\nMild Weight Loss: ${document.getElementById('goal-loss-mild').innerText} kcal/day\nStandard Weight Loss: ${document.getElementById('goal-loss-std').innerText} kcal/day\nFormula: Mifflin-St Jeor (1990)\nDisclaimer: Informational estimate only; not medical advice.`;
+        window.copyResultToClipboard(text, 'Calorie breakdown copied to clipboard!');
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        calculateCalories();
+      });
+    </script>
+  </body>
+</html>

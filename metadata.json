@@ -1,0 +1,6 @@
+{
+  "name": "WellnessKit Hub",
+  "description": "Static health and wellness calculator suite featuring BMI, Calorie, Water Intake, Sleep Cycle, and BMR tools with scientific formula citations and YMYL compliance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
